@@ -1,0 +1,95 @@
+package com.food.cloud.foodrecipesmanagement.controller;
+
+import com.food.cloud.api.RecipeApi;
+import com.food.cloud.foodrecipesmanagement.service.RecipeManagementService;
+import com.food.cloud.models.Recipe;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class RecipeManagementController implements RecipeApi {
+    @Autowired
+    RecipeManagementService recipeManagementService;
+
+    @Override
+    public ResponseEntity<Recipe> addRecipe(@Valid @RequestBody Recipe recipe){
+        Recipe addedRecipe =recipeManagementService.saveRecipe(recipe);
+        return new ResponseEntity<Recipe>(addedRecipe,HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<Void> deleteRecipe(@PathVariable("recipeId") Long recipeId
+            ,@RequestHeader(value="api_key", required=false) String apiKey){
+        recipeManagementService.deleteRecipe(recipeId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<List<Recipe>> findRecipesByFoodType(@Valid @RequestParam(value = "foodType") String foodType){
+        List<Recipe> recipes = recipeManagementService.getRecipeByFoodType(foodType);
+        ResponseEntity responseEntity;
+        if(null!=recipes){
+            responseEntity= new ResponseEntity<List<Recipe>>(recipes, HttpStatus.OK);
+        }else{
+            List<Recipe> emptyRecipes = new ArrayList<Recipe>();
+            responseEntity = new ResponseEntity<List<Recipe>>(emptyRecipes, HttpStatus.NOT_FOUND);
+        }
+        return responseEntity;
+    }
+    @Override
+    public ResponseEntity<List<Recipe>> findRecipesByInstructionAndExcludedIngredient(@Valid @RequestParam(value = "text") String text
+            ,@Valid @RequestParam(value = "ingredient") List<String> ingredient){
+        List<Recipe> recipes = recipeManagementService.getRecipesByInstructionAndExcludedIngredient(text,ingredient);
+        ResponseEntity responseEntity;
+        if(null!=recipes){
+            responseEntity= new ResponseEntity<List<Recipe>>(recipes, HttpStatus.OK);
+        }else{
+            List<Recipe> emptyRecipes = new ArrayList<Recipe>();
+            responseEntity = new ResponseEntity<List<Recipe>>(emptyRecipes, HttpStatus.NOT_FOUND);
+        }
+        return responseEntity;
+    }
+    @Override
+    public ResponseEntity<List<Recipe>> findRecipesByServingsAndIngredient(@Valid @RequestParam(value = "servings") Long servings
+            ,@Valid @RequestParam(value = "ingredient") List<String> ingredient){
+        List<Recipe> recipes = recipeManagementService.getRecipesByServingsAndIngredient(servings,ingredient);
+        ResponseEntity responseEntity;
+        if(null!=recipes){
+            responseEntity= new ResponseEntity<List<Recipe>>(recipes, HttpStatus.OK);
+        }else{
+            List<Recipe> emptyRecipes = new ArrayList<Recipe>();
+            responseEntity = new ResponseEntity<List<Recipe>>(emptyRecipes, HttpStatus.NOT_FOUND);
+        }
+        return responseEntity;
+    }
+    @Override
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable("recipeId") Long recipeId){
+        Recipe recipe =recipeManagementService.getRecipeById(recipeId);
+        ResponseEntity<Recipe> responseEntity;
+        if(recipe==null){
+            recipe = new Recipe();
+            responseEntity= new ResponseEntity<Recipe>(recipe,HttpStatus.NOT_FOUND);
+        }else{
+            responseEntity= new ResponseEntity<Recipe>(recipe,HttpStatus.OK);
+        }
+        return responseEntity;
+    }
+    @Override
+    public ResponseEntity<Recipe> updateRecipe(@Valid @RequestBody Recipe body){
+        Recipe recipe = recipeManagementService.updateRecipe(body);
+        ResponseEntity<Recipe> responseEntity;
+        if(recipe==null){
+            recipe = new Recipe();
+            responseEntity= new ResponseEntity<Recipe>(recipe,HttpStatus.NOT_FOUND);
+        }else{
+            responseEntity= new ResponseEntity<Recipe>(recipe,HttpStatus.OK);
+        }
+        return responseEntity;
+    }
+}

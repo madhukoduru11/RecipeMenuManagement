@@ -1,0 +1,244 @@
+swagger: 2.0
+info:
+  description: "This project helps to manage the food recipes and can filtler based user choices"
+  version: "1.0.0"
+  title: "Managing Food Recipes"
+host: localhost:9191
+basePath: /v2
+tags:
+- name: recipe
+  description: Managing Food Recipes
+paths:
+  /recipe:
+    post:
+      tags:
+      - recipe
+      summary: Add a new recipe to the online menu list
+      description: This API helps us to add new recipe in menu list
+      operationId: addRecipe
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Recipe object that needs to be added to the online menu
+        required: true
+        schema:
+          $ref: '#/definitions/Recipe'
+      responses:
+        201:
+          description: Successfully recipe created
+          schema:
+            $ref: '#/definitions/Recipe'
+        405:
+          description: Invalid input
+        400:
+          description: Bad Request
+    put:
+      tags:
+      - recipe
+      summary: Update an existing recipe
+      description: To update existing recipe information
+      operationId: updateRecipe
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: recipe
+        description: Recipe object that needs to be updated to the store
+        required: true
+        schema:
+          $ref: '#/definitions/Recipe'
+      responses:
+        200:
+          description: Recipe updated successfully
+          schema:
+            $ref: '#/definitions/Recipe'
+        400:
+          description: Invalid Input Object
+        404:
+          description: Recipe not found
+        405:
+          description: Recipe Validation exception
+  /recipe/findByFoodType:
+    get:
+      tags:
+      - recipe
+      summary: Filtering vegetarian or non vegetarian recipes
+      description: Multiple recipe values objects can be provided with comma separated strings
+      operationId: findRecipesByFoodType
+      produces:
+      - application/json
+      parameters:
+      - name: foodType
+        in: query
+        description: FoodType values that need to be considered for filter
+        required: true
+        type: string
+        items:
+          type: string
+          enum:
+          - veg
+          - nonveg
+          default: veg
+        collectionFormat: multi
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Recipe'
+        400:
+          description: Invalid status value
+  /recipe/findByServings/includeIngredient:
+    get:
+      tags:
+      - recipe
+      summary: Filtering with number of servings and with ingredient
+      description: Recipes filtering with no of Servings and with given ingredient
+      operationId: findRecipesByServingsAndIngredient
+      produces:
+      - application/json
+      parameters:
+      - name: servings
+        in: query
+        description: For how many persons recipe can serve and recipe contains given ingredient
+        required: true
+        type: integer
+        format: int64
+      - name: ingredient
+        in: query
+        description: Recipe ingredient
+        required: true
+        type: array
+        items:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Recipe'
+        400:
+          description: Invalid status value
+  /recipe/findByInstruction/excludeIngredient:
+    get:
+      tags:
+      - recipe
+      summary: Filtering with search key exist in instruction and input ingredient not in recipe ingredient list
+      description: Recipes filtering with input search key exist in recipe instruction and input recipe ingredient not in recipe ingredient list 
+      operationId: findRecipesByInstructionAndExcludedIngredient
+      produces:
+      - application/json
+      parameters:
+      - name: text
+        in: query
+        description: Text is existing in recipe instructions or not
+        required: true
+        type: string
+      - name: ingredient
+        in: query
+        description: recipe ingredient
+        required: true
+        type: array
+        items:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Recipe'
+        400:
+          description: Invalid status value
+  /recipe/{recipeId}:
+    get:
+      tags:
+      - recipe
+      summary: Find food recipe by ID
+      description: Returns a single food recipe
+      operationId: getRecipeById
+      produces:
+      - application/json
+      parameters:
+      - name: recipeId
+        in: path
+        description: ID of uniqe food recipe to return
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Recipe'
+        400:
+          description: Invalid Recipe ID supplied
+        404:
+          description: Recipe not found
+    delete:
+      tags:
+      - recipe
+      summary: Deletes a recipe
+      description: Deleting recipe from the food menu list
+      operationId: deleteRecipe
+      produces:
+      - application/json
+      parameters:
+      - name: api_key
+        in: header
+        required: false
+        type: string
+      - name: recipeId
+        in: path
+        description: Recipe id to delete
+        required: true
+        type: integer
+        format: int64
+      responses:
+        400:
+          description: Invalid recipe ID supplied
+        404:
+          description: Recipe not found
+definitions:
+  Recipe:
+    type: object
+    required:
+    - name
+    - foodType
+    - ingredients
+    - numOfServings
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: LemmonChicken
+      foodType:
+        type: string
+        example: veg
+        description: describing recipe is vegetarian or non vegetarian
+      ingredients:
+        type: array
+        xml:
+          name: ingredient
+          wrapped: true
+        items:
+          type: string
+      numOfServings:
+        type: integer
+        format: int64
+        example: 4
+        description: for how many people this dish can serve
+      instructions:
+        type: string
+        example: Please keep 10 min in oven before serving
+        description: for how many people this dish can serve
