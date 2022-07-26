@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface RecipeManagementRepository extends JpaRepository<RecipeDetails,Long> {
-    Recipe findByName(String recipeName);
+    RecipeDetails findByName(String recipeName);
 
     // findById(Long id);
     List<RecipeDetails> findByFoodType(String dishType);

@@ -34,8 +34,8 @@ paths:
             $ref: '#/definitions/Recipe'
         405:
           description: Invalid input
-        400:
-          description: Bad Request
+        409:
+          description: Input Object already available
     put:
       tags:
       - recipe

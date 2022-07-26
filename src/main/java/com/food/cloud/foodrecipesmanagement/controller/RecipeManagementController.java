@@ -21,8 +21,14 @@ public class RecipeManagementController implements RecipeApi {
 
     @Override
     public ResponseEntity<Recipe> addRecipe(@Valid @RequestBody Recipe recipe){
+        ResponseEntity<Recipe> responseEntity;
         Recipe addedRecipe =recipeManagementService.saveRecipe(recipe);
-        return new ResponseEntity<Recipe>(addedRecipe,HttpStatus.OK);
+        if(addedRecipe ==null){
+            responseEntity = responseEntity = new ResponseEntity<>(HttpStatus.CONFLICT);
+        }else{
+            responseEntity = new ResponseEntity<Recipe>(addedRecipe,HttpStatus.OK);
+        }
+        return responseEntity;
     }
     @Override
     public ResponseEntity<String> deleteRecipe(@PathVariable("recipeId") Long recipeId){
@@ -30,7 +36,7 @@ public class RecipeManagementController implements RecipeApi {
         ResponseEntity<String> responseEntity;
 
         if(response== null){
-            responseEntity = new ResponseEntity<String>("In Valid Recipe recipeId",HttpStatus.NOT_FOUND);
+            responseEntity = new ResponseEntity<String>("InValid RecipeId",HttpStatus.NOT_FOUND);
         }else{
             responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
         }

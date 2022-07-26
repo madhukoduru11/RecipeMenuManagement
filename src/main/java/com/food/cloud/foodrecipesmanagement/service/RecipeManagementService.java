@@ -29,8 +29,13 @@ public class RecipeManagementService {
 
     public Recipe saveRecipe(Recipe recipe) {
         RecipeDetails recipeDetails = apiHelper.objectResourceToEntityCopy(recipe);
-        RecipeDetails savedRecipeDetails = recipeRepository.save(recipeDetails);
-        return apiHelper.objectEntityCopyToResourceCopy(savedRecipeDetails);
+        RecipeDetails isRecipeExists = recipeRepository.findByName(recipe.getName());
+        Recipe savedRecipe =null;
+        if((null==isRecipeExists)) {
+            RecipeDetails savedRecipeDetails = recipeRepository.save(recipeDetails);
+            savedRecipe = apiHelper.objectEntityCopyToResourceCopy(savedRecipeDetails);
+        }
+        return savedRecipe;
     }
 
     public List<Recipe> saveRecipes(List<Recipe> recipes) {
@@ -53,18 +58,20 @@ public class RecipeManagementService {
     }
 
     public Recipe getRecipeByName(String name) {
-        return recipeRepository.findByName(name);
+        RecipeDetails recipeDetails = recipeRepository.findByName(name);
+        Recipe recipe =null;
+        if(null!=recipeDetails){
+            recipe = apiHelper.objectEntityCopyToResourceCopy(recipeRepository.findByName(name));
+        }
+        return recipe;
     }
 
     public String deleteRecipe(Long id) {
         Optional<RecipeDetails>  recipeDetails = recipeRepository.findById(id);
-        RecipeDetails recipeDetail = recipeDetails.get();
-        String response;
-        if(null!=recipeDetail){
+        String response =null;
+        if(recipeDetails.isPresent()) {
             recipeRepository.deleteById(id);
             response= "Recipe deleted successfully" +id;
-        }else{
-            response = null;
         }
         return response;
     }
