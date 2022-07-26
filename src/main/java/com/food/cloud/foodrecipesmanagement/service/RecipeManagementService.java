@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 public class RecipeManagementService {
@@ -56,8 +57,16 @@ public class RecipeManagementService {
     }
 
     public String deleteRecipe(Long id) {
-        recipeRepository.deleteById(id);
-        return "product removed !!"  + id;
+        Optional<RecipeDetails>  recipeDetails = recipeRepository.findById(id);
+        RecipeDetails recipeDetail = recipeDetails.get();
+        String response;
+        if(null!=recipeDetail){
+            recipeRepository.deleteById(id);
+            response= "Recipe deleted successfully" +id;
+        }else{
+            response = null;
+        }
+        return response;
     }
 
     public Recipe updateRecipe(Recipe recipe) {

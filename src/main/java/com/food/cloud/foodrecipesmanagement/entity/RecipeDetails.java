@@ -1,9 +1,14 @@
 package com.food.cloud.foodrecipesmanagement.entity;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
-
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "RECIPE_DETAILS")
 public class RecipeDetails {

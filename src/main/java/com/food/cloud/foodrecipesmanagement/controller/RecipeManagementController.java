@@ -25,10 +25,16 @@ public class RecipeManagementController implements RecipeApi {
         return new ResponseEntity<Recipe>(addedRecipe,HttpStatus.OK);
     }
     @Override
-    public ResponseEntity<Void> deleteRecipe(@PathVariable("recipeId") Long recipeId
-            ,@RequestHeader(value="api_key", required=false) String apiKey){
-        recipeManagementService.deleteRecipe(recipeId);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<String> deleteRecipe(@PathVariable("recipeId") Long recipeId){
+        String response = recipeManagementService.deleteRecipe(recipeId);
+        ResponseEntity<String> responseEntity;
+
+        if(response== null){
+            responseEntity = new ResponseEntity<String>("In Valid Recipe recipeId",HttpStatus.NOT_FOUND);
+        }else{
+            responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+        }
+        return responseEntity;
     }
     @Override
     public ResponseEntity<List<Recipe>> findRecipesByFoodType(@Valid @RequestParam(value = "foodType") String foodType){
@@ -99,7 +105,7 @@ public class RecipeManagementController implements RecipeApi {
         if(listOfRecipes==null){
             responseEntity =  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else{
-            responseEntity=new ResponseEntity<List<Recipe>>(listOfRecipes,HttpStatus.NOT_FOUND);
+            responseEntity=new ResponseEntity<List<Recipe>>(listOfRecipes,HttpStatus.OK);
         }
         return responseEntity;
     }

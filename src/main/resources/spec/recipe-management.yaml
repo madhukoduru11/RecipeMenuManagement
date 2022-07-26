@@ -192,10 +192,6 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: api_key
-        in: header
-        required: false
-        type: string
       - name: recipeId
         in: path
         description: Recipe id to delete
@@ -203,6 +199,10 @@ paths:
         type: integer
         format: int64
       responses:
+        200:
+          description: successful operation
+          schema:
+            type: string
         400:
           description: Invalid recipe ID supplied
         404:
