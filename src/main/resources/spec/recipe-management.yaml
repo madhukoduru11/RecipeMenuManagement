@@ -207,6 +207,24 @@ paths:
           description: Invalid recipe ID supplied
         404:
           description: Recipe not found
+  /recipe/findAll:
+    get:
+      tags:
+        - "recipe"
+      summary: "Finding all available recipes"
+      description: "Returns all available recipes"
+      operationId: "findAll"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Recipe"
+        "400":
+          description: "Invalid status value"
 definitions:
   Recipe:
     type: object

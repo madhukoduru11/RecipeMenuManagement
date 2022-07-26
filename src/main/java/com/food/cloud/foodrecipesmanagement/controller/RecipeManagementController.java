@@ -92,4 +92,15 @@ public class RecipeManagementController implements RecipeApi {
         }
         return responseEntity;
     }
+    @Override
+    public ResponseEntity<List<Recipe>> findAll(){
+        List<Recipe> listOfRecipes = recipeManagementService.getAllRecipes();
+        ResponseEntity<List<Recipe>> responseEntity;
+        if(listOfRecipes==null){
+            responseEntity =  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else{
+            responseEntity=new ResponseEntity<List<Recipe>>(listOfRecipes,HttpStatus.NOT_FOUND);
+        }
+        return responseEntity;
+    }
 }

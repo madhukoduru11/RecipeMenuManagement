@@ -7,6 +7,8 @@ import com.food.cloud.models.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -36,9 +38,9 @@ public class RecipeManagementService {
         return recipesList;
     }
 
-    public List<Recipe> getRecipes() {
+/*    public List<Recipe> getRecipes() {
         return apiHelper.objectEntityListToResourceListCopy(recipeRepository.findAll());
-    }
+    }*/
 
     public List<Recipe> getRecipeByFoodType(String recipeType) {
         List<RecipeDetails> recipeDetailsList = recipeRepository.findByFoodType(recipeType);
@@ -117,6 +119,27 @@ public class RecipeManagementService {
         }
         return recipe;
     }
+
+    public List<Recipe> getAllRecipes(){
+        List<RecipeDetails>  recipeDetails = recipeRepository.findAll();
+        List<Recipe> listRecipe=null;
+        if(null!=recipeDetails && recipeDetails.size() > 0){
+            listRecipe = apiHelper.objectEntityListToResourceListCopy(recipeDetails);
+        }
+        return listRecipe;
+    }
+    /*
+     To Retrieve per page requested Recipes objects
+    * */
+    public List<Recipe> getAllRecipes(int offset, int pageSize){
+        Page<RecipeDetails>  recipeDetails = recipeRepository.findAll(PageRequest.of(offset, pageSize));
+        List<RecipeDetails> recipeList=recipeDetails.get().collect(Collectors.toList());
+        List<Recipe> listRecipe=null;
+        if(null!=recipeList && recipeList.size() > 0){
+            listRecipe = apiHelper.objectEntityListToResourceListCopy(recipeList);
+        }
+        return listRecipe;
+    }
    @PostConstruct
     public void loadApplicationData(){
         Resource resource = resourceLoader.getResource("classpath:"+"csv/upload.csv");
@@ -127,6 +150,7 @@ public class RecipeManagementService {
         }catch (IOException e) {
             throw new RuntimeException("fail to parse CSV file:"  + e.getMessage());
         }
-
     }
+
+    //public void findAllProductsWithPagination
 }
