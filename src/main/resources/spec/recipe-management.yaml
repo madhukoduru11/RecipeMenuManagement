@@ -179,8 +179,6 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Recipe'
-        400:
-          description: Invalid Recipe ID supplied
         404:
           description: Recipe not found
     delete:
